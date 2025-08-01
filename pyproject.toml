@@ -1,0 +1,9 @@
+[project]
+name = "arcgis-item-graph"
+version = "0.1.0"
+description = "Generate an item graph from ArcGIS"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "networkx>=3.5",
+]
