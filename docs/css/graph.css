@@ -87,3 +87,20 @@ body {
 .load-button:hover {
     background: #1976D2;
 }
+
+.popup-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.popup-toggle input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.popup-toggle label {
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+}
