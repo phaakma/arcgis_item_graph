@@ -54,6 +54,7 @@ function readLocalFile(file) {
     reader.onload = function (e) {
       try {
         const graph = JSON.parse(e.target.result);
+        console.log("Loaded graph data:", graph);
         // Stop existing simulation if it exists
         if (simulation) simulation.stop();
         // Clear existing svg
@@ -70,6 +71,7 @@ function readLocalFile(file) {
 }
 
 function reloadGraphFromFile() {
+  console.log("Reloading graph from file:", filePath);
   readLocalFile(filePath);
 }
 
@@ -86,14 +88,14 @@ function createGraph(graph) {
       graph.physics.collisionRadius;
   }
 
-const zoom = d3.zoom().on("zoom", zoomed);
+  const zoom = d3.zoom().on("zoom", zoomed);
 
-const svg = d3
-  .select("body")
-  .append("svg")
-  .attr("width", currentWidth)
-  .attr("height", currentHeight)
-  .call(zoom);  // call it once here
+  const svg = d3
+    .select("body")
+    .append("svg")
+    .attr("width", currentWidth)
+    .attr("height", currentHeight)
+    .call(zoom); // call it once here
 
   // Add container group for zoom/pan
   const container = svg.append("g");
@@ -404,7 +406,9 @@ function saveAsSVG() {
   const url = URL.createObjectURL(blob);
 
   const filename =
-    document.querySelector(".filename-input").value.trim() || "itemgraph";
+    filePath && filePath.name
+      ? filePath.name.replace(/\.[^/.]+$/, "") // remove extension
+      : "graph";
   const a = document.createElement("a");
   a.href = url;
   a.download = `${filename}.svg`;
