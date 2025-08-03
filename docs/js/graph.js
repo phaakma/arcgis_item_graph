@@ -455,8 +455,11 @@ function saveGraphToFile() {
   });
 
   const url = URL.createObjectURL(blob);
+  // use the filePath name if it exists, otherwise default to "graph"
   const filename =
-    document.querySelector(".filename-input")?.value.trim() || "graph";
+    filePath && filePath.name
+      ? filePath.name.replace(/\.[^/.]+$/, "") // remove extension
+      : "graph";
   const a = document.createElement("a");
   a.href = url;
   a.download = `${filename}.json`;
