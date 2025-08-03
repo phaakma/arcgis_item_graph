@@ -5,11 +5,11 @@ let currentHeight;
 let simulation;
 let dataPath;
 let filePath;
+
 const fileInput = document.getElementById("load-data");
 
 fileInput.addEventListener("click", () => {
-  // Always clear the value so selecting the same file again works
-  fileInput.value = "";
+  fileInput.value = ""; // reset so the same file can be selected again
 });
 
 fileInput.addEventListener("change", (event) => {
@@ -18,6 +18,11 @@ fileInput.addEventListener("change", (event) => {
     readLocalFile(file);
   }
 });
+
+function triggerFileLoad() {
+  fileInput.click(); // trigger the hidden input
+}
+
 
 const controls = [
   { name: "link-distance", force: "link", property: "distance" },

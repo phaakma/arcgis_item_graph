@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Network Graph Visualization</title>
         <script src="https://d3js.org/d3.v7.min.js"></script>
-        <link rel="stylesheet" href="./css/graph.css">
+        <link rel="stylesheet" href="./css/graph.css" />
     </head>
     <body>
         <div class="controls">
+            <!-- Hidden file input -->
             <input type="file" id="load-data" accept=".json"
-                class="file-input" />
-            <label for="load-data" class="load-button">Load Data</label>
-            <button class="save-button" onclick="saveAsSVG()">Save as
-                SVG</button>            
-            <button onclick="saveGraphToFile()">Save Graph</button>
+                style="display: none;" />
+
+            <!-- Buttons with base and modifier classes -->
+            <button class="btn btn--blue" onclick="triggerFileLoad()">Load
+                Data</button>
+            <button class="btn btn--green" onclick="saveAsSVG()">Save as
+                SVG</button>
+            <button class="btn btn--green" onclick="saveGraphToFile()">Save
+                Graph</button>
 
             <div class="popup-toggle">
-                <input type="checkbox" id="enable-popups">
+                <input type="checkbox" id="enable-popups" />
                 <label for="enable-popups">Enable Popups</label>
             </div>
         </div>
@@ -25,7 +30,7 @@
         <div class="physics-controls">
             <div class="physics-header">
                 <h3>Adjust physics options</h3>
-                <button class="reset-physics-button"
+                <button class="btn btn--red btn--small"
                     onclick="resetPhysics()">Reset</button>
             </div>
 
@@ -33,11 +38,9 @@
                 <label for="link-distance">Link distance</label>
                 <div class="control-group">
                     <input type="range" id="link-distance" min="10" max="500"
-                        step="10" value="100">
+                        step="10" value="100" />
                     <input type="number" id="link-distance-value" min="10"
-                        max="500" step="10" value="100"
-                        title="Set link distance"
-                        placeholder="Link distance">
+                        max="500" step="10" value="100" />
                 </div>
             </div>
 
@@ -45,9 +48,9 @@
                 <label for="charge-strength">Charge strength</label>
                 <div class="control-group">
                     <input type="range" id="charge-strength" min="-1000"
-                        max="-10" step="10" value="-20">
+                        max="-10" step="10" value="-20" />
                     <input type="number" id="charge-strength-value" min="-1000"
-                        max="-10" step="10" value="-20">
+                        max="-10" step="10" value="-20" />
                 </div>
             </div>
 
@@ -55,9 +58,9 @@
                 <label for="collision-radius">Collision radius</label>
                 <div class="control-group">
                     <input type="range" id="collision-radius" min="10" max="500"
-                        step="10" value="75">
+                        step="10" value="75" />
                     <input type="number" id="collision-radius-value" min="10"
-                        max="500" step="10" value="75">
+                        max="500" step="10" value="75" />
                 </div>
             </div>
         </div>
