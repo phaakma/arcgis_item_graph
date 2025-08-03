@@ -62,9 +62,7 @@ function handlePopupToggle() {
 }
 
 function readLocalFile(file) {
-  console.log("Reading local file:", file);
   if (file) {
-    console.log("File selected:", file.name);
     const reader = new FileReader();
     reader.onload = function (e) {
       try {
@@ -314,7 +312,6 @@ function initializePhysicsControls() {
 
 function updatePhysics(forceName, property, value) {
   if (!simulation) return;
-  console.log("updating the physics....");
 
   if (forceName === "link") {
     simulation.force("link").distance(value);
