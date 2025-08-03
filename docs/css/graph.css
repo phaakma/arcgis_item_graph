@@ -2,6 +2,12 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+<<<<<<< HEAD
+=======
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+>>>>>>> 67a2560d6a1a2b203ca95bf196d3e7451adbbcf4
 }
 
 .node {
@@ -31,6 +37,7 @@ body {
 }
 
 .node-label {
+<<<<<<< HEAD
     font-size: 14px;
     font-family: Arial, sans-serif;
     pointer-events: none;
@@ -38,6 +45,13 @@ body {
 }
 
 /* Add new styles for export controls */
+=======
+    pointer-events: none;
+    fill: currentColor;
+}
+
+/* Controls container */
+>>>>>>> 67a2560d6a1a2b203ca95bf196d3e7451adbbcf4
 .controls {
     position: fixed;
     top: 20px;
@@ -45,13 +59,18 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+<<<<<<< HEAD
     background: white;
+=======
+    background: rgb(230, 230, 230);
+>>>>>>> 67a2560d6a1a2b203ca95bf196d3e7451adbbcf4
     padding: 10px;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1000;
 }
 
+<<<<<<< HEAD
 .save-button {
     padding: 8px 16px;
     background: #4caf50;
@@ -65,12 +84,70 @@ body {
     background: #45a049;
 }
 
+=======
+/* Base button style */
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+/* Color variants */
+.btn--green {
+    background: #4caf50;
+}
+
+.btn--green:hover {
+    background: #45a049;
+}
+
+.btn--blue {
+    background: #2196F3;
+}
+
+.btn--blue:hover {
+    background: #1976D2;
+}
+
+.btn--orange {
+    background: #ff9800;
+}
+
+.btn--orange:hover {
+    background: #f57c00;
+}
+
+.btn--red {
+    background: #f44336;
+}
+
+.btn--red:hover {
+    background: #d32f2f;
+}
+
+/* Optional smaller variant */
+.btn--small {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+/* Hidden file input */
+.file-input {
+    display: none;
+}
+
+>>>>>>> 67a2560d6a1a2b203ca95bf196d3e7451adbbcf4
 .filename-input {
     padding: 6px;
     border: 1px solid #ddd;
     border-radius: 4px;
     width: 120px;
 }
+<<<<<<< HEAD
 .file-input {
     display: none;
 }
@@ -87,3 +164,79 @@ body {
 .load-button:hover {
     background: #1976D2;
 }
+=======
+
+/* Checkbox + label for popups */
+.popup-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.popup-toggle input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.popup-toggle label {
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Physics panel */
+.physics-controls {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    background: rgb(230, 230, 230);
+    padding: 15px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 300px;
+}
+
+.physics-controls h3 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.physics-option {
+    margin-bottom: 15px;
+}
+
+.physics-option label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.control-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.control-group input[type="range"] {
+    flex: 1;
+}
+
+.control-group input[type="number"] {
+    width: 70px;
+    padding: 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.physics-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.physics-header h3 {
+    margin: 0;
+}
+>>>>>>> 67a2560d6a1a2b203ca95bf196d3e7451adbbcf4
