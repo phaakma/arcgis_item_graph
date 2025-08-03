@@ -37,21 +37,11 @@ body {
 }
 
 .node-label {
-<<<<<<< HEAD
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    pointer-events: none;
-    fill: #333;
-}
-
-/* Add new styles for export controls */
-=======
     pointer-events: none;
     fill: currentColor;
 }
 
 /* Controls container */
->>>>>>> 67a2560d6a1a2b203ca95bf196d3e7451adbbcf4
 .controls {
     position: fixed;
     top: 20px;

@@ -4,8 +4,6 @@ let currentWidth;
 let currentHeight;
 let simulation;
 let dataPath;
-<<<<<<< HEAD
-=======
 let filePath;
 
 const fileInput = document.getElementById("load-data");
@@ -31,7 +29,6 @@ const controls = [
   { name: "charge-strength", force: "charge", property: "strength" },
   { name: "collision-radius", force: "collision", property: "radius" },
 ];
->>>>>>> 67a2560d6a1a2b203ca95bf196d3e7451adbbcf4
 
 // Load graph data and initialize visualization
 async function initializeGraph() {
