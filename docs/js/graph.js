@@ -70,13 +70,21 @@ function readLocalFile(file) {
 }
 
 function reloadGraphFromFile() {
-  readLocalFile(filePath)
+  readLocalFile(filePath);
 }
 
 function createGraph(graph) {
   currentGraph = graph;
   currentWidth = window.innerWidth;
   currentHeight = window.innerHeight;
+
+  if (graph.physics) {
+    document.getElementById("link-distance").value = graph.physics.linkDistance;
+    document.getElementById("charge-strength").value =
+      graph.physics.chargeStrength;
+    document.getElementById("collision-radius").value =
+      graph.physics.collisionRadius;
+  }
 
   const svg = d3
     .select("body")
@@ -94,6 +102,15 @@ function createGraph(graph) {
     {
       container.attr("transform", event.transform);
     }
+  }
+
+  // Apply saved zoom if available
+  if (graph.camera) {
+    const transform = d3.zoomIdentity
+      .translate(graph.camera.x, graph.camera.y)
+      .scale(graph.camera.k);
+
+    svg.call(d3.zoom().on("zoom", zoomed)).call(d3.zoom().transform, transform);
   }
 
   // Create new simulation
@@ -380,6 +397,58 @@ function saveAsSVG() {
   const a = document.createElement("a");
   a.href = url;
   a.download = `${filename}.svg`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function saveGraphToFile() {
+  if (!currentGraph || !simulation) {
+    alert("No graph to save.");
+    return;
+  }
+
+  // Clone graph to avoid mutating the original
+  const graphCopy = {
+    nodes: currentGraph.nodes.map((node) => ({
+      ...node,
+      x: node.x,
+      y: node.y,
+      fx: node.fx,
+      fy: node.fy,
+    })),
+    links: currentGraph.links.map((link) => ({
+      source: typeof link.source === "object" ? link.source.id : link.source,
+      target: typeof link.target === "object" ? link.target.id : link.target,
+    })),
+    physics: {
+      linkDistance: Number(document.getElementById("link-distance").value),
+      chargeStrength: Number(document.getElementById("charge-strength").value),
+      collisionRadius: Number(
+        document.getElementById("collision-radius").value
+      ),
+    },
+  };
+
+  const transform = d3.zoomTransform(d3.select("svg").node());
+
+  graphCopy.camera = {
+    x: transform.x,
+    y: transform.y,
+    k: transform.k,
+  };
+
+  const blob = new Blob([JSON.stringify(graphCopy, null, 2)], {
+    type: "application/json",
+  });
+
+  const url = URL.createObjectURL(blob);
+  const filename =
+    document.querySelector(".filename-input")?.value.trim() || "graph";
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${filename}.json`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
