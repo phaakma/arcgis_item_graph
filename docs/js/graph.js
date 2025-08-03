@@ -216,7 +216,11 @@ function createGraph(graph) {
     .join("circle")
     .attr("class", "node")
     .attr("r", 10)
-    .attr("fill", "#69b3a2")
+    .attr("fill", (d) => {
+      if (d.fx != null || d.fy != null) return "#ff7f0e"; // fixed node
+      if (d.selected) return "#1f77b4"; // previously selected node
+      return "#69b3a2"; // default
+    })
     .call(drag(simulation))
     .on("mouseover", showPopup)
     .on("mouseout", hidePopupWithDelay);
