@@ -5,6 +5,19 @@ let currentHeight;
 let simulation;
 let dataPath;
 let filePath;
+const fileInput = document.getElementById("load-data");
+
+fileInput.addEventListener("click", () => {
+  // Always clear the value so selecting the same file again works
+  fileInput.value = "";
+});
+
+fileInput.addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    readLocalFile(file);
+  }
+});
 
 const controls = [
   { name: "link-distance", force: "link", property: "distance" },
@@ -49,12 +62,13 @@ function handlePopupToggle() {
 }
 
 function readLocalFile(file) {
+  console.log("Reading local file:", file);
   if (file) {
+    console.log("File selected:", file.name);
     const reader = new FileReader();
     reader.onload = function (e) {
       try {
         const graph = JSON.parse(e.target.result);
-        console.log("Loaded graph data:", graph);
         // Stop existing simulation if it exists
         if (simulation) simulation.stop();
         // Clear existing svg
@@ -68,11 +82,6 @@ function readLocalFile(file) {
     };
     reader.readAsText(file);
   }
-}
-
-function reloadGraphFromFile() {
-  console.log("Reloading graph from file:", filePath);
-  readLocalFile(filePath);
 }
 
 function createGraph(graph) {
