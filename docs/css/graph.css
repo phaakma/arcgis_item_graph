@@ -2,6 +2,9 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
 }
 
 .node {
@@ -31,10 +34,8 @@ body {
 }
 
 .node-label {
-    font-size: 14px;
-    font-family: Arial, sans-serif;
     pointer-events: none;
-    fill: #333;
+    fill: currentColor;
 }
 
 /* Add new styles for export controls */
@@ -103,4 +104,86 @@ body {
     cursor: pointer;
     -webkit-user-select: none;
     user-select: none;
+}
+
+.physics-controls {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 300px;
+}
+
+.physics-controls h3 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.physics-option {
+    margin-bottom: 15px;
+}
+
+.physics-option label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.control-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.control-group input[type="range"] {
+    flex: 1;
+}
+
+.control-group input[type="number"] {
+    width: 70px;
+    padding: 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.reload-button {
+    padding: 8px 16px;
+    background: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.reload-button:hover {
+    background: #f57c00;
+}
+
+.physics-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.physics-header h3 {
+    margin: 0;
+}
+
+.reset-physics-button {
+    padding: 6px 12px;
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.reset-physics-button:hover {
+    background: #d32f2f;
 }

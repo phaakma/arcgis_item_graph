@@ -9,16 +9,58 @@
     </head>
     <body>
         <div class="controls">
+            <input type="file" id="load-data" accept=".json"
+                class="file-input" />
+            <label for="load-data" class="load-button">Load Data</label>
+            <button class="reload-button"
+                onclick="reloadGraphFromFile()">Reload</button>
             <input type="text" class="filename-input" placeholder="itemgraph" />
             <span>.svg</span>
             <button class="save-button" onclick="saveAsSVG()">Save as
                 SVG</button>
-            <input type="file" id="load-data" accept=".json"
-                class="file-input" />
-            <label for="load-data" class="load-button">Load Data</label>
             <div class="popup-toggle">
-                <input type="checkbox" id="enable-popups" checked>
+                <input type="checkbox" id="enable-popups">
                 <label for="enable-popups">Enable Popups</label>
+            </div>
+        </div>
+
+        <div class="physics-controls">
+            <div class="physics-header">
+                <h3>Adjust physics options</h3>
+                <button class="reset-physics-button"
+                    onclick="resetPhysics()">Reset</button>
+            </div>
+
+            <div class="physics-option">
+                <label for="link-distance">Link distance</label>
+                <div class="control-group">
+                    <input type="range" id="link-distance" min="10" max="500"
+                        step="10" value="100">
+                    <input type="number" id="link-distance-value" min="10"
+                        max="500" step="10" value="100"
+                        title="Set link distance"
+                        placeholder="Link distance">
+                </div>
+            </div>
+
+            <div class="physics-option">
+                <label for="charge-strength">Charge strength</label>
+                <div class="control-group">
+                    <input type="range" id="charge-strength" min="-1000"
+                        max="-10" step="10" value="-20">
+                    <input type="number" id="charge-strength-value" min="-1000"
+                        max="-10" step="10" value="-20">
+                </div>
+            </div>
+
+            <div class="physics-option">
+                <label for="collision-radius">Collision radius</label>
+                <div class="control-group">
+                    <input type="range" id="collision-radius" min="10" max="500"
+                        step="10" value="75">
+                    <input type="number" id="collision-radius-value" min="10"
+                        max="500" step="10" value="75">
+                </div>
             </div>
         </div>
 

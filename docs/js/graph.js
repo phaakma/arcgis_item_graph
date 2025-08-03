@@ -4,6 +4,13 @@ let currentWidth;
 let currentHeight;
 let simulation;
 let dataPath;
+let filePath;
+
+const controls = [
+  { name: "link-distance", force: "link", property: "distance" },
+  { name: "charge-strength", force: "charge", property: "strength" },
+  { name: "collision-radius", force: "collision", property: "radius" },
+];
 
 // Load graph data and initialize visualization
 async function initializeGraph() {
@@ -21,10 +28,27 @@ async function initializeGraph() {
   document
     .getElementById("enable-popups")
     .addEventListener("change", handlePopupToggle);
+
+  initializePhysicsControls();
 }
 
 function handleFileSelect(event) {
-  const file = event.target.files[0];
+  filePath = event.target.files[0];
+  readLocalFile(filePath);
+}
+
+function handlePopupToggle() {
+  if (!document.getElementById("enable-popups").checked) {
+    // Hide popup immediately when disabled
+    popup.style("opacity", 0);
+    if (popupTimer) {
+      clearTimeout(popupTimer);
+      popupTimer = null;
+    }
+  }
+}
+
+function readLocalFile(file) {
   if (file) {
     const reader = new FileReader();
     reader.onload = function (e) {
@@ -43,6 +67,10 @@ function handleFileSelect(event) {
     };
     reader.readAsText(file);
   }
+}
+
+function reloadGraphFromFile() {
+  readLocalFile(filePath)
 }
 
 function createGraph(graph) {
@@ -76,11 +104,21 @@ function createGraph(graph) {
       d3
         .forceLink(graph.links)
         .id((d) => d.id)
-        .distance(100)
+        .distance(Number(document.getElementById("link-distance").value))
     )
-    .force("charge", d3.forceManyBody().strength(-300))
+    .force(
+      "charge",
+      d3
+        .forceManyBody()
+        .strength(Number(document.getElementById("charge-strength").value))
+    )
     .force("center", d3.forceCenter(currentWidth / 2, currentHeight / 2))
-    .force("collision", d3.forceCollide().radius(50));
+    .force(
+      "collision",
+      d3
+        .forceCollide()
+        .radius(Number(document.getElementById("collision-radius").value))
+    );
 
   const link = container
     .append("g")
@@ -148,17 +186,6 @@ function createGraph(graph) {
     }, 2000);
   }
 
-  function handlePopupToggle() {
-    if (!document.getElementById("enable-popups").checked) {
-      // Hide popup immediately when disabled
-      popup.style("opacity", 0);
-      if (popupTimer) {
-        clearTimeout(popupTimer);
-        popupTimer = null;
-      }
-    }
-  }
-
   // Update node selection with improved hover behavior
   const node = container
     .append("g")
@@ -222,6 +249,67 @@ function createGraph(graph) {
         .on("end", dragended);
     }
   }
+}
+
+function initializePhysicsControls() {
+  controls.forEach((control) => {
+    const slider = document.getElementById(control.name);
+    const value = document.getElementById(`${control.name}-value`);
+
+    // Sync the inputs
+    slider.addEventListener("input", () => {
+      value.value = slider.value;
+      updatePhysics(control.force, control.property, Number(slider.value));
+    });
+
+    value.addEventListener("input", () => {
+      if (value.value === "") return;
+      const numValue = Number(value.value);
+      if (numValue >= Number(value.min) && numValue <= Number(value.max)) {
+        slider.value = numValue;
+        updatePhysics(control.force, control.property, numValue);
+      }
+    });
+  });
+}
+
+function updatePhysics(forceName, property, value) {
+  if (!simulation) return;
+  console.log("updating the physics....");
+
+  if (forceName === "link") {
+    simulation.force("link").distance(value);
+  } else if (forceName === "charge") {
+    simulation.force("charge").strength(value);
+  } else if (forceName === "collision") {
+    simulation.force("collision").radius(value);
+  }
+
+  simulation.alpha(0.3).restart();
+}
+
+function resetPhysics() {
+  // Default values
+  const defaults = {
+    "link-distance": 100,
+    "charge-strength": -20,
+    "collision-radius": 75,
+  };
+
+  // Update all controls
+  Object.entries(defaults).forEach(([id, value]) => {
+    const slider = document.getElementById(id);
+    const numberInput = document.getElementById(`${id}-value`);
+
+    slider.value = value;
+    numberInput.value = value;
+
+    // Get force name and property from the control ID
+    const control = controls.find((c) => c.name === id);
+    if (control) {
+      updatePhysics(control.force, control.property, value);
+    }
+  });
 }
 
 function saveAsSVG() {
