@@ -104,6 +104,11 @@ function createGraph(graph) {
     }
   }
 
+  if (typeof graph.popupEnabled === "boolean") {
+    const popupToggle = document.getElementById("enable-popups");
+    popupToggle.checked = graph.popupEnabled;
+  }
+
   // Apply saved zoom if available
   if (graph.camera) {
     const transform = d3.zoomIdentity
@@ -409,7 +414,7 @@ function saveGraphToFile() {
     return;
   }
 
-  // Clone graph to avoid mutating the original
+  // Clone nodes with position and fixed state
   const graphCopy = {
     nodes: currentGraph.nodes.map((node) => ({
       ...node,
@@ -417,6 +422,7 @@ function saveGraphToFile() {
       y: node.y,
       fx: node.fx,
       fy: node.fy,
+      selected: node.selected || false,
     })),
     links: currentGraph.links.map((link) => ({
       source: typeof link.source === "object" ? link.source.id : link.source,
@@ -429,14 +435,15 @@ function saveGraphToFile() {
         document.getElementById("collision-radius").value
       ),
     },
-  };
-
-  const transform = d3.zoomTransform(d3.select("svg").node());
-
-  graphCopy.camera = {
-    x: transform.x,
-    y: transform.y,
-    k: transform.k,
+    camera: (() => {
+      const transform = d3.zoomTransform(d3.select("svg").node());
+      return {
+        x: transform.x,
+        y: transform.y,
+        k: transform.k,
+      };
+    })(),
+    popupEnabled: document.getElementById("enable-popups").checked,
   };
 
   const blob = new Blob([JSON.stringify(graphCopy, null, 2)], {
