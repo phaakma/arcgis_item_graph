@@ -86,12 +86,14 @@ function createGraph(graph) {
       graph.physics.collisionRadius;
   }
 
-  const svg = d3
-    .select("body")
-    .append("svg")
-    .attr("width", currentWidth)
-    .attr("height", currentHeight)
-    .call(d3.zoom().on("zoom", zoomed));
+const zoom = d3.zoom().on("zoom", zoomed);
+
+const svg = d3
+  .select("body")
+  .append("svg")
+  .attr("width", currentWidth)
+  .attr("height", currentHeight)
+  .call(zoom);  // call it once here
 
   // Add container group for zoom/pan
   const container = svg.append("g");
@@ -115,7 +117,7 @@ function createGraph(graph) {
       .translate(graph.camera.x, graph.camera.y)
       .scale(graph.camera.k);
 
-    svg.call(d3.zoom().on("zoom", zoomed)).call(d3.zoom().transform, transform);
+    svg.call(zoom.transform, transform);
   }
 
   // Create new simulation
