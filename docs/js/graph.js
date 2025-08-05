@@ -416,13 +416,6 @@ function createGraph(graph) {
       .on("drag", dragged)
       .on("end", dragended);
   }
-
-  function updateHaloColor(selection, nodeData) {
-    const isFixed = nodeData.fx != null || nodeData.fy != null;
-    selection
-      .select("circle.halo")
-      .attr("stroke", isFixed ? NODE_FIXED_STROKE : NODE_FLOATING_STROKE);
-  }
 }
 
 function initializePhysicsControls() {
@@ -616,6 +609,26 @@ function saveGraphToFile() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+function updateHaloColor(selection, nodeData) {
+  const isFixed = nodeData.fx != null || nodeData.fy != null;
+  selection
+    .select("circle.halo")
+    .attr("stroke", isFixed ? NODE_FIXED_STROKE : NODE_FLOATING_STROKE);
+}
+
+function resetAllNodesToFloating() {
+  currentGraph.nodes.forEach((node) => {
+    delete node.fx;
+    delete node.fy;
+  });
+  simulation.alpha(1).restart();
+
+  d3.selectAll("g.node-group").each(function () {
+    const node = d3.select(this);
+    updateHaloColor(node, node.datum());
+  });
 }
 
 // Start visualization once DOM is loaded
