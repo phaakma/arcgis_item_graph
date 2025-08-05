@@ -5,8 +5,97 @@ let currentHeight;
 let simulation;
 let dataPath;
 let filePath;
+let currentNodeSize = 40;
 
 const fileInput = document.getElementById("load-data");
+
+const NODE_FILL = "#d9e1e7ff";
+const NODE_FIXED_STROKE = "#378ccdff";
+const NODE_FLOATING_STROKE = "#e0b169ff";
+const NODE_STROKE_WIDTH = 3;
+
+const iconConfig = {
+  "Web Map": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/maps16.svg",
+    size: 15,
+  },
+  "Feature Service": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/featureshosted16.svg",
+    size: 15,
+  },
+  Table: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/table16.svg",
+    size: 15,
+  },
+  "Web Mapping Application": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/instantapps16.svg",
+    size: 15,
+  },
+  Notebook: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/notebook16.svg",
+    size: 15,
+  },
+  "File Geodatabase": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/datafilesgray16.svg",
+    size: 15,
+  },
+  "Web Experience": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/experiencebuilder16.svg",
+    size: 15,
+  },
+  "Service Definition": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/data16.svg",
+    size: 15,
+  },
+  "Desktop Style": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/desktopstyle16.svg",
+    size: 15,
+  },
+  Style: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/style16.svg",
+    size: 15,
+  },
+  Form: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/survey16.svg",
+    size: 15,
+  },
+  "Web Scene": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/webscenelocal16.svg",
+    size: 15,
+  },
+  Application: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/apps16.svg",
+    size: 15,
+  },
+  Dashboard: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/dashboard16.svg",
+    size: 15,
+  },
+  Image: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/image16.svg",
+    size: 15,
+  },
+  Solution: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/solutions16.svg",
+    size: 15,
+  },
+};
 
 fileInput.addEventListener("click", () => {
   fileInput.value = ""; // reset so the same file can be selected again
@@ -22,7 +111,6 @@ fileInput.addEventListener("change", (event) => {
 function triggerFileLoad() {
   fileInput.click(); // trigger the hidden input
 }
-
 
 const controls = [
   { name: "link-distance", force: "link", property: "distance" },
@@ -224,72 +312,110 @@ function createGraph(graph) {
     }, 2000);
   }
 
-  // Update node selection with improved hover behavior
-  const node = container
+  const nodeGroup = container
     .append("g")
-    .selectAll("circle")
+    .selectAll("g")
     .data(graph.nodes)
-    .join("circle")
-    .attr("class", "node")
-    .attr("r", 10)
-    .attr("fill", (d) => {
-      if (d.fx != null || d.fy != null) return "#ff7f0e"; // fixed node
-      if (d.selected) return "#1f77b4"; // previously selected node
-      return "#69b3a2"; // default
-    })
+    .join("g")
+    .attr("class", "node-group")
     .call(drag(simulation))
     .on("mouseover", showPopup)
-    .on("mouseout", hidePopupWithDelay);
+    .on("mouseout", hidePopupWithDelay)
+    .on("contextmenu", function (event, d) {
+      event.preventDefault(); // prevent browser context menu
 
-  // Remove old popup click handlers since we're using hover now
+      const node = d3.select(this);
+
+      // Toggle fixed state
+      if (d.fx != null || d.fy != null) {
+        // Currently fixed -> release
+        d.fx = null;
+        d.fy = null;
+      } else {
+        // Currently floating -> fix at current position
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+      updateHaloColor(node, d);
+    });
+
+  // Add halo circle
+  nodeGroup
+    .append("circle")
+    .attr("class", "halo")
+    .attr("r", (d) => {
+      const config = iconConfig[d.type];
+      return config
+        ? config.size / 2 + 5 + NODE_STROKE_WIDTH
+        : 15 + NODE_STROKE_WIDTH;
+    })
+    .attr("fill", NODE_FILL)
+    .attr("stroke", (d) =>
+      d.fx != null || d.fy != null ? NODE_FIXED_STROKE : NODE_FLOATING_STROKE
+    )
+    .attr("stroke-width", NODE_STROKE_WIDTH);
+
+  // Add image if type is known
+  nodeGroup
+    .append("image")
+    .attr("xlink:href", (d) => iconConfig[d.type]?.image || "")
+    .attr("width", (d) => iconConfig[d.type]?.size || 0)
+    .attr("height", (d) => iconConfig[d.type]?.size || 0)
+    .attr("x", (d) => -(iconConfig[d.type]?.size || 0) / 2)
+    .attr("y", (d) => -(iconConfig[d.type]?.size || 0) / 2)
+    .attr("display", (d) => (iconConfig[d.type] ? "block" : "none"));
+
+  // Fallback: add a circle if no image
+  nodeGroup
+    .append("circle")
+    .attr("r", 10)
+    .attr("fill", (d) => {
+      if (iconConfig[d.type]) return "none"; // hide fallback circle if icon exists
+      if (d.fx != null || d.fy != null) return "#ff7f0e";
+      if (d.selected) return "#1f77b4";
+      return "#69b3a2";
+    });
+
   d3.select("body").on("click", null);
   popup.on("click", null);
 
   simulation.on("tick", () => {
-    {
-      link
-        .attr("x1", (d) => d.source.x)
-        .attr("y1", (d) => d.source.y)
-        .attr("x2", (d) => d.target.x)
-        .attr("y2", (d) => d.target.y);
+    link
+      .attr("x1", (d) => d.source.x)
+      .attr("y1", (d) => d.source.y)
+      .attr("x2", (d) => d.target.x)
+      .attr("y2", (d) => d.target.y);
 
-      node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
-
-      labels.attr("x", (d) => d.x).attr("y", (d) => d.y);
-    }
+    nodeGroup.attr("transform", (d) => `translate(${d.x},${d.y})`);
+    labels.attr("x", (d) => d.x).attr("y", (d) => d.y);
   });
 
   function drag(simulation) {
-    {
-      function dragstarted(event) {
-        {
-          if (!event.active) simulation.alphaTarget(0.3).restart();
-          event.subject.fx = event.subject.x;
-          event.subject.fy = event.subject.y;
-        }
-      }
-
-      function dragged(event) {
-        {
-          event.subject.fx = event.x;
-          event.subject.fy = event.y;
-        }
-      }
-
-      function dragended(event) {
-        {
-          if (!event.active) simulation.alphaTarget(0);
-          // Don't reset fx/fy to null - keep node fixed
-          d3.select(event.sourceEvent.target).attr("fill", "#ff7f0e");
-        }
-      }
-
-      return d3
-        .drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended);
+    function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+      updateHaloColor(d3.select(this), d);
     }
+
+    function dragged(event, d) {
+      d.fx = event.x;
+      d.fy = event.y;
+      updateHaloColor(d3.select(this), d);
+    }
+
+    function dragended(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = event.x;
+      d.fy = event.y;
+      updateHaloColor(d3.select(this), d);
+    }
+
+    return d3
+      .drag()
+      .on("start", dragstarted)
+      .on("drag", dragged)
+      .on("end", dragended);
   }
 }
 
@@ -485,6 +611,88 @@ function saveGraphToFile() {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+function updateHaloColor(selection, nodeData) {
+  const isFixed = nodeData.fx != null || nodeData.fy != null;
+  selection
+    .select("circle.halo")
+    .attr("stroke", isFixed ? NODE_FIXED_STROKE : NODE_FLOATING_STROKE);
+}
+
+function resetAllNodesToFloating() {
+  currentGraph.nodes.forEach((node) => {
+    delete node.fx;
+    delete node.fy;
+  });
+  simulation.alpha(1).restart();
+
+  d3.selectAll("g.node-group").each(function () {
+    const node = d3.select(this);
+    updateHaloColor(node, node.datum());
+  });
+}
+
+// function setNodeSize(size) {
+//   currentNodeSize = size;
+
+//   d3.selectAll("g.node-group").each(function (d) {
+//     const group = d3.select(this);
+
+//     // Update halo circle (outer outline)
+//     group.select("circle.halo").attr("r", currentNodeSize / 2 + 4); // slightly bigger than icon
+
+//     // Update fallback circle
+//     group.select("circle.fallback").attr("r", currentNodeSize / 2);
+
+//     // Update image icon (if present)
+//     group
+//       .select("image")
+//       .attr("width", currentNodeSize)
+//       .attr("height", currentNodeSize)
+//       .attr("x", -currentNodeSize / 2)
+//       .attr("y", -currentNodeSize / 2);
+//   });
+// }
+
+function setNodeSize(scale) {
+  // scale is a multiplier, e.g. 1 = original size, 1.5 = 50% bigger, 0.5 = half size
+
+  console.log(scale)
+  scale_percentage = scale / 100;
+  console.log(scale_percentage)
+
+
+  d3.selectAll("g.node-group").each(function(d) {
+    const group = d3.select(this);
+    const config = iconConfig[d.type];
+    const baseIconSize = config ? config.size : 15; // fallback base size if no icon
+    // Calculate scaled icon size
+    const iconSize = baseIconSize * scale_percentage;
+
+    // Halo radius = (iconSize / 2) + 5 + NODE_STROKE_WIDTH (same formula as original)
+    const haloRadius = iconSize / 2 + 5 + NODE_STROKE_WIDTH;
+
+    // Update halo circle radius
+    group.select("circle.halo")
+      .attr("r", haloRadius);
+
+    // Update image size and position
+    group.select("image")
+      .attr("width", iconSize)
+      .attr("height", iconSize)
+      .attr("x", -iconSize / 2)
+      .attr("y", -iconSize / 2);
+
+    // Update fallback circle radius
+    // Original fallback radius was 10, so scale that as well:
+    const fallbackRadius = 10 * scale_percentage;
+    group.select("circle.fallback")
+      .attr("r", fallbackRadius);
+  });
+}
+
+
+
 
 // Start visualization once DOM is loaded
 document.addEventListener("DOMContentLoaded", initializeGraph);

@@ -1,190 +1,198 @@
 body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    color: #333;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: #333;
 }
 
 .node {
-    stroke: #fff;
-    stroke-width: 1.5px;
-    cursor: pointer;
+  stroke: #fff;
+  stroke-width: 1.5px;
+  cursor: pointer;
 }
 
 .link {
-    stroke: #999;
-    stroke-opacity: 0.6;
-    stroke-width: 1px;
-    marker-end: url(#arrow);
+  stroke: #999;
+  stroke-opacity: 0.6;
+  stroke-width: 1px;
+  marker-end: url(#arrow);
 }
 
 .popup {
-    position: absolute;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    pointer-events: auto;
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: 1000;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  pointer-events: auto;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 1000;
 }
 
 .node-label {
-    pointer-events: none;
-    fill: currentColor;
+  pointer-events: none;
+  fill: currentColor;
 }
 
 /* Controls container */
 .controls {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgb(230, 230, 230);
-    padding: 10px;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgb(230, 230, 230);
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
 /* Base button style */
 .btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.2s;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
 }
 
 /* Color variants */
 .btn--green {
-    background: #4caf50;
+  background: #4caf50;
 }
 
 .btn--green:hover {
-    background: #45a049;
+  background: #45a049;
 }
 
 .btn--blue {
-    background: #2196F3;
+  background: #2196f3;
 }
 
 .btn--blue:hover {
-    background: #1976D2;
+  background: #1976d2;
 }
 
 .btn--orange {
-    background: #ff9800;
+  background: #ff9800;
 }
 
 .btn--orange:hover {
-    background: #f57c00;
+  background: #f57c00;
 }
 
 .btn--red {
-    background: #f44336;
+  background: #f44336;
 }
 
 .btn--red:hover {
-    background: #d32f2f;
+  background: #d32f2f;
 }
 
 /* Optional smaller variant */
 .btn--small {
-    padding: 6px 12px;
-    font-size: 12px;
+  padding: 6px 12px;
+  font-size: 12px;
 }
 
 /* Hidden file input */
 .file-input {
-    display: none;
+  display: none;
 }
 
 .filename-input {
-    padding: 6px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 120px;
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 120px;
 }
 
 /* Checkbox + label for popups */
 .popup-toggle {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 10px;
 }
 
 .popup-toggle input[type="checkbox"] {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .popup-toggle label {
-    cursor: pointer;
-    -webkit-user-select: none;
-    user-select: none;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* Physics panel */
 .physics-controls {
-    position: fixed;
-    top: 90px;
-    right: 20px;
-    background: rgb(230, 230, 230);
-    padding: 15px;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    width: 300px;
+  position: fixed;
+  top: 90px;
+  right: 20px;
+  background: rgb(230, 230, 230);
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 300px;
 }
 
 .physics-controls h3 {
-    margin: 0 0 15px 0;
-    font-size: 16px;
-    font-weight: normal;
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  font-weight: normal;
 }
 
 .physics-option {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .physics-option label {
-    display: block;
-    margin-bottom: 5px;
+  display: block;
+  margin-bottom: 5px;
 }
 
 .control-group {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .control-group input[type="range"] {
-    flex: 1;
+  flex: 1;
 }
 
 .control-group input[type="number"] {
-    width: 70px;
-    padding: 4px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+  width: 70px;
+  padding: 4px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 .physics-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
 .physics-header h3 {
-    margin: 0;
+  margin: 0;
+}
+
+.node image {
+  pointer-events: none;
+}
+.node circle {
+  stroke: #333;
+  stroke-width: 1px;
 }
