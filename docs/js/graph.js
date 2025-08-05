@@ -249,7 +249,24 @@ function createGraph(graph) {
     .attr("class", "node-group")
     .call(drag(simulation))
     .on("mouseover", showPopup)
-    .on("mouseout", hidePopupWithDelay);
+    .on("mouseout", hidePopupWithDelay)
+    .on("contextmenu", function (event, d) {
+      event.preventDefault(); // prevent browser context menu
+
+      const node = d3.select(this);
+
+      // Toggle fixed state
+      if (d.fx != null || d.fy != null) {
+        // Currently fixed -> release
+        d.fx = null;
+        d.fy = null;
+      } else {
+        // Currently floating -> fix at current position
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+      updateHaloColor(node, d);
+    });
 
   // Add halo circle
   nodeGroup
