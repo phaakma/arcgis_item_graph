@@ -5,6 +5,7 @@ let currentHeight;
 let simulation;
 let dataPath;
 let filePath;
+let currentNodeSize = 40;
 
 const fileInput = document.getElementById("load-data");
 
@@ -630,6 +631,68 @@ function resetAllNodesToFloating() {
     updateHaloColor(node, node.datum());
   });
 }
+
+// function setNodeSize(size) {
+//   currentNodeSize = size;
+
+//   d3.selectAll("g.node-group").each(function (d) {
+//     const group = d3.select(this);
+
+//     // Update halo circle (outer outline)
+//     group.select("circle.halo").attr("r", currentNodeSize / 2 + 4); // slightly bigger than icon
+
+//     // Update fallback circle
+//     group.select("circle.fallback").attr("r", currentNodeSize / 2);
+
+//     // Update image icon (if present)
+//     group
+//       .select("image")
+//       .attr("width", currentNodeSize)
+//       .attr("height", currentNodeSize)
+//       .attr("x", -currentNodeSize / 2)
+//       .attr("y", -currentNodeSize / 2);
+//   });
+// }
+
+function setNodeSize(scale) {
+  // scale is a multiplier, e.g. 1 = original size, 1.5 = 50% bigger, 0.5 = half size
+
+  console.log(scale)
+  scale_percentage = scale / 100;
+  console.log(scale_percentage)
+
+
+  d3.selectAll("g.node-group").each(function(d) {
+    const group = d3.select(this);
+    const config = iconConfig[d.type];
+    const baseIconSize = config ? config.size : 15; // fallback base size if no icon
+    // Calculate scaled icon size
+    const iconSize = baseIconSize * scale_percentage;
+
+    // Halo radius = (iconSize / 2) + 5 + NODE_STROKE_WIDTH (same formula as original)
+    const haloRadius = iconSize / 2 + 5 + NODE_STROKE_WIDTH;
+
+    // Update halo circle radius
+    group.select("circle.halo")
+      .attr("r", haloRadius);
+
+    // Update image size and position
+    group.select("image")
+      .attr("width", iconSize)
+      .attr("height", iconSize)
+      .attr("x", -iconSize / 2)
+      .attr("y", -iconSize / 2);
+
+    // Update fallback circle radius
+    // Original fallback radius was 10, so scale that as well:
+    const fallbackRadius = 10 * scale_percentage;
+    group.select("circle.fallback")
+      .attr("r", fallbackRadius);
+  });
+}
+
+
+
 
 // Start visualization once DOM is loaded
 document.addEventListener("DOMContentLoaded", initializeGraph);
