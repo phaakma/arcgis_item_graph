@@ -8,6 +8,24 @@ let filePath;
 
 const fileInput = document.getElementById("load-data");
 
+const iconConfig = {
+  "Web Map": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/maps16.svg",
+    size: 15,
+  },
+  "Feature Service": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/featureshosted16.svg",
+    size: 15,
+  },
+  "Web Mapping Application": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/table16.svg",
+    size: 15,
+  },
+};
+
 fileInput.addEventListener("click", () => {
   fileInput.value = ""; // reset so the same file can be selected again
 });
@@ -22,7 +40,6 @@ fileInput.addEventListener("change", (event) => {
 function triggerFileLoad() {
   fileInput.click(); // trigger the hidden input
 }
-
 
 const controls = [
   { name: "link-distance", force: "link", property: "distance" },
@@ -224,72 +241,96 @@ function createGraph(graph) {
     }, 2000);
   }
 
-  // Update node selection with improved hover behavior
-  const node = container
+  const nodeGroup = container
     .append("g")
-    .selectAll("circle")
+    .selectAll("g")
     .data(graph.nodes)
-    .join("circle")
-    .attr("class", "node")
-    .attr("r", 10)
-    .attr("fill", (d) => {
-      if (d.fx != null || d.fy != null) return "#ff7f0e"; // fixed node
-      if (d.selected) return "#1f77b4"; // previously selected node
-      return "#69b3a2"; // default
-    })
+    .join("g")
+    .attr("class", "node-group")
     .call(drag(simulation))
     .on("mouseover", showPopup)
     .on("mouseout", hidePopupWithDelay);
 
-  // Remove old popup click handlers since we're using hover now
+  // Add halo circle
+  nodeGroup
+    .append("circle")
+    .attr("class", "halo")
+    .attr("r", (d) => {
+      const config = iconConfig[d.type];
+      return config ? config.size / 2 + 5 : 15;
+    })
+    .attr("fill", (d) =>
+      d.fx != null || d.fy != null ? "green" : "lightgray"
+    );
+
+  // Add image if type is known
+  nodeGroup
+    .append("image")
+    .attr("xlink:href", (d) => iconConfig[d.type]?.image || "")
+    .attr("width", (d) => iconConfig[d.type]?.size || 0)
+    .attr("height", (d) => iconConfig[d.type]?.size || 0)
+    .attr("x", (d) => -(iconConfig[d.type]?.size || 0) / 2)
+    .attr("y", (d) => -(iconConfig[d.type]?.size || 0) / 2)
+    .attr("display", (d) => (iconConfig[d.type] ? "block" : "none"));
+
+  // Fallback: add a circle if no image
+  nodeGroup
+    .append("circle")
+    .attr("r", 10)
+    .attr("fill", (d) => {
+      if (iconConfig[d.type]) return "none"; // hide fallback circle if icon exists
+      if (d.fx != null || d.fy != null) return "#ff7f0e";
+      if (d.selected) return "#1f77b4";
+      return "#69b3a2";
+    });
+
   d3.select("body").on("click", null);
   popup.on("click", null);
 
   simulation.on("tick", () => {
-    {
-      link
-        .attr("x1", (d) => d.source.x)
-        .attr("y1", (d) => d.source.y)
-        .attr("x2", (d) => d.target.x)
-        .attr("y2", (d) => d.target.y);
+    link
+      .attr("x1", (d) => d.source.x)
+      .attr("y1", (d) => d.source.y)
+      .attr("x2", (d) => d.target.x)
+      .attr("y2", (d) => d.target.y);
 
-      node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
-
-      labels.attr("x", (d) => d.x).attr("y", (d) => d.y);
-    }
+    nodeGroup.attr("transform", (d) => `translate(${d.x},${d.y})`);
+    labels.attr("x", (d) => d.x).attr("y", (d) => d.y);
   });
 
   function drag(simulation) {
-    {
-      function dragstarted(event) {
-        {
-          if (!event.active) simulation.alphaTarget(0.3).restart();
-          event.subject.fx = event.subject.x;
-          event.subject.fy = event.subject.y;
-        }
-      }
-
-      function dragged(event) {
-        {
-          event.subject.fx = event.x;
-          event.subject.fy = event.y;
-        }
-      }
-
-      function dragended(event) {
-        {
-          if (!event.active) simulation.alphaTarget(0);
-          // Don't reset fx/fy to null - keep node fixed
-          d3.select(event.sourceEvent.target).attr("fill", "#ff7f0e");
-        }
-      }
-
-      return d3
-        .drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended);
+    function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+      updateHaloColor(d3.select(this), d);
     }
+
+    function dragged(event, d) {
+      d.fx = event.x;
+      d.fy = event.y;
+      updateHaloColor(d3.select(this), d);
+    }
+
+    function dragended(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = event.x;
+      d.fy = event.y;
+      updateHaloColor(d3.select(this), d);
+    }
+
+    return d3
+      .drag()
+      .on("start", dragstarted)
+      .on("drag", dragged)
+      .on("end", dragended);
+  }
+
+  function updateHaloColor(selection, nodeData) {
+    const isFixed = nodeData.fx != null || nodeData.fy != null;
+    selection
+      .select("circle.halo")
+      .attr("fill", isFixed ? "green" : "lightgray");
   }
 }
 
