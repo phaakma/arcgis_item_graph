@@ -8,6 +8,11 @@ let filePath;
 
 const fileInput = document.getElementById("load-data");
 
+const NODE_FILL = "#d9e1e7ff";
+const NODE_FIXED_STROKE = "#378ccdff";
+const NODE_FLOATING_STROKE = "#e0b169ff";
+const NODE_STROKE_WIDTH = 3;
+
 const iconConfig = {
   "Web Map": {
     image:
@@ -19,9 +24,74 @@ const iconConfig = {
       "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/featureshosted16.svg",
     size: 15,
   },
-  "Web Mapping Application": {
+  Table: {
     image:
       "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/table16.svg",
+    size: 15,
+  },
+  "Web Mapping Application": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/instantapps16.svg",
+    size: 15,
+  },
+  Notebook: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/notebook16.svg",
+    size: 15,
+  },
+  "File Geodatabase": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/datafilesgray16.svg",
+    size: 15,
+  },
+  "Web Experience": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/experiencebuilder16.svg",
+    size: 15,
+  },
+  "Service Definition": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/data16.svg",
+    size: 15,
+  },
+  "Desktop Style": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/desktopstyle16.svg",
+    size: 15,
+  },
+  Style: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/style16.svg",
+    size: 15,
+  },
+  Form: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/survey16.svg",
+    size: 15,
+  },
+  "Web Scene": {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/webscenelocal16.svg",
+    size: 15,
+  },
+  Application: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/apps16.svg",
+    size: 15,
+  },
+  Dashboard: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/dashboard16.svg",
+    size: 15,
+  },
+  Image: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/image16.svg",
+    size: 15,
+  },
+  Solution: {
+    image:
+      "https://cdn-a.arcgis.com/cdn/1BE082D/js/arcgis-app-components/arcgis-app/assets/arcgis-item-type/solutions16.svg",
     size: 15,
   },
 };
@@ -274,11 +344,15 @@ function createGraph(graph) {
     .attr("class", "halo")
     .attr("r", (d) => {
       const config = iconConfig[d.type];
-      return config ? config.size / 2 + 5 : 15;
+      return config
+        ? config.size / 2 + 5 + NODE_STROKE_WIDTH
+        : 15 + NODE_STROKE_WIDTH;
     })
-    .attr("fill", (d) =>
-      d.fx != null || d.fy != null ? "green" : "lightgray"
-    );
+    .attr("fill", NODE_FILL)
+    .attr("stroke", (d) =>
+      d.fx != null || d.fy != null ? NODE_FIXED_STROKE : NODE_FLOATING_STROKE
+    )
+    .attr("stroke-width", NODE_STROKE_WIDTH);
 
   // Add image if type is known
   nodeGroup
@@ -347,7 +421,7 @@ function createGraph(graph) {
     const isFixed = nodeData.fx != null || nodeData.fy != null;
     selection
       .select("circle.halo")
-      .attr("fill", isFixed ? "green" : "lightgray");
+      .attr("stroke", isFixed ? NODE_FIXED_STROKE : NODE_FLOATING_STROKE);
   }
 }
 
