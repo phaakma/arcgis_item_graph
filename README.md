@@ -7,7 +7,7 @@ A Python script that uses the ArcGIS API for Python to generate a graph json fil
 - Optionally, update the output folder and file name.  
 
 ## Static website  
-A static website that allows to upload the json file which will be visualised using D3.js.  
+In the docs folder is a static website that allows to upload the json file which will be visualised using D3.js.  
 
 Either download the three static files or use the GitHub Pages hosted version here:  
 [https://phaakma.github.io/arcgis_item_graph/](https://phaakma.github.io/arcgis_item_graph/)
